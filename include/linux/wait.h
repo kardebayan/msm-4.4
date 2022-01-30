@@ -236,7 +236,6 @@ wait_queue_head_t *bit_waitqueue(void *, int);
 			}						\
 			break;						\
 		}							\
-									\
 		cmd;							\
 	}								\
 	finish_wait(&wq, &__wait);					\

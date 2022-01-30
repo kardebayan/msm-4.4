@@ -1749,6 +1749,9 @@ struct task_struct {
 	/* unserialized, strictly 'current' */
 	unsigned in_execve:1; /* bit to tell LSMs we're in execve */
 	unsigned in_iowait:1;
+
+
+
 #ifdef CONFIG_MEMCG
 	unsigned memcg_may_oom:1;
 #endif
@@ -3057,6 +3060,7 @@ static inline void exit_thread(struct task_struct *tsk)
 }
 #endif
 
+
 extern void exit_files(struct task_struct *);
 extern void __cleanup_sighand(struct sighand_struct *);
 
@@ -3126,6 +3130,8 @@ extern bool current_is_single_threaded(void);
 /* Careful: this is a double loop, 'break' won't work as expected. */
 #define for_each_process_thread(p, t)	\
 	for_each_process(p) for_each_thread(p, t)
+
+
 
 static inline int get_nr_threads(struct task_struct *tsk)
 {
@@ -3386,6 +3392,7 @@ static inline int fatal_signal_pending(struct task_struct *p)
 {
 	return signal_pending(p) && __fatal_signal_pending(p);
 }
+
 
 static inline int signal_pending_state(long state, struct task_struct *p)
 {

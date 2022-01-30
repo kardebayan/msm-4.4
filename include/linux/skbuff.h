@@ -3249,7 +3249,13 @@ static inline __sum16 __skb_checksum_validate_complete(struct sk_buff *skb,
 
 	skb->csum = psum;
 
-	if (complete || skb->len <= CHECKSUM_BREAK) {
+#ifndef VENDOR_EDIT
+    //Wei.Wang@Connectivity.WiFi.Network.internet.1015237, 2017/05/30,
+    //Modify for [1015237] avoid sending wrong data to app
+    if (complete || skb->len <= CHECKSUM_BREAK) {
+#else /* VENDOR_EDIT */
+    if (complete) {
+#endif /* VENDOR_EDIT */
 		__sum16 csum;
 
 		csum = __skb_checksum_complete(skb);
