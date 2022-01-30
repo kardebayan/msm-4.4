@@ -141,7 +141,6 @@
 #include <net/tcp.h>
 
 #include "net-sysfs.h"
-
 /* Instead of increasing this, you should create a hash table. */
 #define MAX_GRO_SKBS 8
 
