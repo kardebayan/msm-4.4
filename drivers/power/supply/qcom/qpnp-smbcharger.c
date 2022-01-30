@@ -2400,8 +2400,9 @@ static int dc_suspend_vote_cb(struct votable *votable,
 	if (rc < 0)
 		return rc;
 
-	if (chip->dc_psy_type != -EINVAL && chip->dc_psy)
+	if (chip->dc_psy_type != -EINVAL && chip->dc_psy){
 		power_supply_changed(chip->dc_psy);
+	}
 
 	return rc;
 }
@@ -3689,8 +3690,9 @@ static void smbchg_external_power_changed(struct power_supply *psy)
 skip_current_for_non_sdp:
 	smbchg_vfloat_adjust_check(chip);
 
-	if (chip->batt_psy)
+	if (chip->batt_psy){
 		power_supply_changed(chip->batt_psy);
+	}
 }
 
 static int smbchg_otg_regulator_enable(struct regulator_dev *rdev)
@@ -4411,8 +4413,9 @@ static int smbchg_change_usb_supply_type(struct smbchg_chip *chip,
 	if (type == POWER_SUPPLY_TYPE_UNKNOWN)
 		chip->usb_supply_type = type;
 
-	if (!chip->skip_usb_notification)
+	if (!chip->skip_usb_notification) {
 		power_supply_changed(chip->usb_psy);
+	}
 
 	/* set the correct buck switching frequency */
 	rc = smbchg_set_optimal_charging_mode(chip, type);
@@ -4485,8 +4488,9 @@ static void smbchg_hvdcp_det_work(struct work_struct *work)
 		}
 		smbchg_change_usb_supply_type(chip,
 				POWER_SUPPLY_TYPE_USB_HVDCP);
-		if (chip->batt_psy)
+		if (chip->batt_psy){
 			power_supply_changed(chip->batt_psy);
+		}
 		smbchg_aicl_deglitch_wa_check(chip);
 	}
 	smbchg_relax(chip, PM_DETECT_HVDCP);
@@ -5737,8 +5741,9 @@ static int smbchg_battery_set_property(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_CAPACITY:
 		chip->fake_battery_soc = val->intval;
-		if (chip->batt_psy)
+		if (chip->batt_psy) {
 			power_supply_changed(chip->batt_psy);
+		}
 		break;
 	case POWER_SUPPLY_PROP_SYSTEM_TEMP_LEVEL:
 		smbchg_system_temp_level_set(chip, val->intval);
@@ -6020,8 +6025,9 @@ static irqreturn_t batt_hot_handler(int irq, void *_chip)
 	chip->batt_hot = !!(reg & HOT_BAT_HARD_BIT);
 	pr_smb(PR_INTERRUPT, "triggered: 0x%02x\n", reg);
 	smbchg_parallel_usb_check_ok(chip);
-	if (chip->batt_psy)
+	if (chip->batt_psy) {
 		power_supply_changed(chip->batt_psy);
+	}
 	smbchg_charging_status_change(chip);
 	smbchg_wipower_check(chip);
 	set_property_on_fg(chip, POWER_SUPPLY_PROP_HEALTH,
@@ -6038,8 +6044,9 @@ static irqreturn_t batt_cold_handler(int irq, void *_chip)
 	chip->batt_cold = !!(reg & COLD_BAT_HARD_BIT);
 	pr_smb(PR_INTERRUPT, "triggered: 0x%02x\n", reg);
 	smbchg_parallel_usb_check_ok(chip);
-	if (chip->batt_psy)
+	if (chip->batt_psy){
 		power_supply_changed(chip->batt_psy);
+	}
 	smbchg_charging_status_change(chip);
 	smbchg_wipower_check(chip);
 	set_property_on_fg(chip, POWER_SUPPLY_PROP_HEALTH,
@@ -6056,8 +6063,9 @@ static irqreturn_t batt_warm_handler(int irq, void *_chip)
 	chip->batt_warm = !!(reg & HOT_BAT_SOFT_BIT);
 	pr_smb(PR_INTERRUPT, "triggered: 0x%02x\n", reg);
 	smbchg_parallel_usb_check_ok(chip);
-	if (chip->batt_psy)
+	if (chip->batt_psy){
 		power_supply_changed(chip->batt_psy);
+	}
 	set_property_on_fg(chip, POWER_SUPPLY_PROP_HEALTH,
 			get_prop_batt_health(chip));
 	return IRQ_HANDLED;
@@ -6072,8 +6080,9 @@ static irqreturn_t batt_cool_handler(int irq, void *_chip)
 	chip->batt_cool = !!(reg & COLD_BAT_SOFT_BIT);
 	pr_smb(PR_INTERRUPT, "triggered: 0x%02x\n", reg);
 	smbchg_parallel_usb_check_ok(chip);
-	if (chip->batt_psy)
+	if (chip->batt_psy) {
 		power_supply_changed(chip->batt_psy);
+	}
 	set_property_on_fg(chip, POWER_SUPPLY_PROP_HEALTH,
 			get_prop_batt_health(chip));
 	return IRQ_HANDLED;
@@ -6087,8 +6096,9 @@ static irqreturn_t batt_pres_handler(int irq, void *_chip)
 	smbchg_read(chip, &reg, chip->bat_if_base + RT_STS, 1);
 	chip->batt_present = !(reg & BAT_MISSING_BIT);
 	pr_smb(PR_INTERRUPT, "triggered: 0x%02x\n", reg);
-	if (chip->batt_psy)
+	if (chip->batt_psy){
 		power_supply_changed(chip->batt_psy);
+	}
 	smbchg_charging_status_change(chip);
 	set_property_on_fg(chip, POWER_SUPPLY_PROP_HEALTH,
 			get_prop_batt_health(chip));
@@ -6122,8 +6132,9 @@ static irqreturn_t chg_error_handler(int irq, void *_chip)
 	}
 
 	smbchg_parallel_usb_check_ok(chip);
-	if (chip->batt_psy)
+	if (chip->batt_psy) {
 		power_supply_changed(chip->batt_psy);
+	}
 	smbchg_charging_status_change(chip);
 	smbchg_wipower_check(chip);
 	return IRQ_HANDLED;
@@ -6135,8 +6146,9 @@ static irqreturn_t fastchg_handler(int irq, void *_chip)
 
 	pr_smb(PR_INTERRUPT, "p2f triggered\n");
 	smbchg_parallel_usb_check_ok(chip);
-	if (chip->batt_psy)
+	if (chip->batt_psy){
 		power_supply_changed(chip->batt_psy);
+	}
 	smbchg_charging_status_change(chip);
 	smbchg_wipower_check(chip);
 	return IRQ_HANDLED;
@@ -6164,8 +6176,9 @@ static irqreturn_t chg_term_handler(int irq, void *_chip)
 	set_property_on_fg(chip, POWER_SUPPLY_PROP_CHARGE_DONE, 1);
 
 	smbchg_parallel_usb_check_ok(chip);
-	if (chip->batt_psy)
+	if (chip->batt_psy) {
 		power_supply_changed(chip->batt_psy);
+	}
 	smbchg_charging_status_change(chip);
 
 	return IRQ_HANDLED;
@@ -6180,8 +6193,9 @@ static irqreturn_t taper_handler(int irq, void *_chip)
 	smbchg_read(chip, &reg, chip->chgr_base + RT_STS, 1);
 	pr_smb(PR_INTERRUPT, "triggered: 0x%02x\n", reg);
 	smbchg_parallel_usb_taper(chip);
-	if (chip->batt_psy)
+	if (chip->batt_psy) {
 		power_supply_changed(chip->batt_psy);
+	}
 	smbchg_charging_status_change(chip);
 	smbchg_wipower_check(chip);
 	return IRQ_HANDLED;
@@ -6195,8 +6209,9 @@ static irqreturn_t recharge_handler(int irq, void *_chip)
 	smbchg_read(chip, &reg, chip->chgr_base + RT_STS, 1);
 	pr_smb(PR_INTERRUPT, "triggered: 0x%02x\n", reg);
 	smbchg_parallel_usb_check_ok(chip);
-	if (chip->batt_psy)
+	if (chip->batt_psy){
 		power_supply_changed(chip->batt_psy);
+	}
 	smbchg_charging_status_change(chip);
 	return IRQ_HANDLED;
 }
@@ -6208,8 +6223,9 @@ static irqreturn_t wdog_timeout_handler(int irq, void *_chip)
 
 	smbchg_read(chip, &reg, chip->misc_base + RT_STS, 1);
 	pr_warn_ratelimited("wdog timeout rt_stat = 0x%02x\n", reg);
-	if (chip->batt_psy)
+	if (chip->batt_psy) {
 		power_supply_changed(chip->batt_psy);
+	}
 	smbchg_charging_status_change(chip);
 	return IRQ_HANDLED;
 }
@@ -6246,8 +6262,9 @@ static irqreturn_t dcin_uv_handler(int irq, void *_chip)
 	if (chip->dc_present != dc_present) {
 		/* dc changed */
 		chip->dc_present = dc_present;
-		if (chip->dc_psy_type != -EINVAL && chip->batt_psy)
+		if (chip->dc_psy_type != -EINVAL && chip->batt_psy){
 			power_supply_changed(chip->dc_psy);
+		}
 		smbchg_charging_status_change(chip);
 		smbchg_aicl_deglitch_wa_check(chip);
 		chip->vbat_above_headroom = false;
@@ -6513,8 +6530,9 @@ static irqreturn_t aicl_done_handler(int irq, void *_chip)
 	if (usb_present)
 		smbchg_parallel_usb_check_ok(chip);
 
-	if (chip->aicl_complete && chip->batt_psy)
+	if (chip->aicl_complete && chip->batt_psy) {
 		power_supply_changed(chip->batt_psy);
+	}
 
 	return IRQ_HANDLED;
 }
