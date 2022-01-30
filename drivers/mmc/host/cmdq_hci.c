@@ -838,7 +838,11 @@ ring_doorbell:
 		cmdq_dumpregs(cq_host);
 		BUG_ON(1);
 	}
+	
 	MMC_TRACE(mmc, "%s: tag: %d\n", __func__, tag);
+	
+
+	
 	cmdq_writel(cq_host, 1 << tag, CQTDBR);
 	/* Commit the doorbell write immediately */
 	wmb();
@@ -895,6 +899,7 @@ static void cmdq_finish_data(struct mmc_host *mmc, unsigned int tag)
 		cq_host->ops->crypto_cfg_reset(mmc, tag);
 	mrq->done(mrq);
 }
+
 
 irqreturn_t cmdq_irq(struct mmc_host *mmc, int err)
 {
