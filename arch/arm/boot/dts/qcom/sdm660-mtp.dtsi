@@ -44,7 +44,12 @@
 	qcom,vddp-ref-clk-supply = <&pm660_l1>;
 	qcom,vddp-ref-clk-max-microamp = <100>;
 
-	status = "ok";
+//#ifndef VENDOR_EDIT
+//yh@BSP.Storage.Emmc, 2017-05-23 add for keep emmc vccq always on
+//	status = "ok";
+//#else
+	status = "disabled";
+//#endif
 };
 
 &pm660_gpios {
