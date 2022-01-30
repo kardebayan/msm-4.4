@@ -50,6 +50,7 @@
 #include <linux/vmpressure.h>
 #include <linux/zcache.h>
 
+
 #define CREATE_TRACE_POINTS
 #include <trace/events/almk.h>
 
@@ -61,6 +62,7 @@
 
 #define CREATE_TRACE_POINTS
 #include "trace/lowmemorykiller.h"
+
 
 static uint32_t lowmem_debug_level = 1;
 static short lowmem_adj[6] = {
@@ -137,9 +139,8 @@ int adjust_minadj(short *min_score_adj)
 		else
 			ret = VMPRESSURE_ADJUST_NORMAL;
 		*min_score_adj = adj_max_shift;
-	}
 	atomic_set(&shift_adj, 0);
-
+    }
 	return ret;
 }
 
@@ -216,6 +217,7 @@ static int test_task_flag(struct task_struct *p, int flag)
 
 	return 0;
 }
+
 
 static int test_task_state(struct task_struct *p, int state)
 {
@@ -404,6 +406,8 @@ void tune_lmk_param(int *other_free, int *other_file, struct shrink_control *sc)
 	}
 }
 
+
+
 static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
 {
 	struct task_struct *tsk;
@@ -564,8 +568,8 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
 			     (long)zcache_pages() * (long)(PAGE_SIZE / 1024),
 			     sc->gfp_mask);
 
+
 		if (lowmem_debug_level >= 2 && selected_oom_score_adj == 0) {
-			show_mem(SHOW_MEM_FILTER_NODES);
 			dump_tasks(NULL, NULL);
 		}
 
@@ -588,6 +592,7 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
 	return rem;
 }
 
+
 static struct shrinker lowmem_shrinker = {
 	.scan_objects = lowmem_scan,
 	.count_objects = lowmem_count,
@@ -599,6 +604,8 @@ static int __init lowmem_init(void)
 {
 	register_shrinker(&lowmem_shrinker);
 	vmpressure_notifier_register(&lmk_vmpr_nb);
+
+
 	return 0;
 }
 device_initcall(lowmem_init);
@@ -698,4 +705,5 @@ module_param_array_named(minfree, lowmem_minfree, uint, &lowmem_minfree_size,
 			 S_IRUGO | S_IWUSR);
 module_param_named(debug_level, lowmem_debug_level, uint, S_IRUGO | S_IWUSR);
 module_param_named(lmk_fast_run, lmk_fast_run, int, S_IRUGO | S_IWUSR);
+
 
