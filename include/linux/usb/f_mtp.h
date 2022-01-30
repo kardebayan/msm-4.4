@@ -49,5 +49,7 @@ struct __compat_mtp_event {
 #define COMPAT_MTP_SEND_FILE_WITH_HEADER  _IOW('M', 4, \
 						struct __compat_mtp_file_range)
 #endif
+
+
 #endif
 #endif /* __LINUX_USB_F_MTP_H */
