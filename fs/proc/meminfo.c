@@ -57,8 +57,11 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
 	/*
 	 * Estimate the amount of memory available for userspace allocations,
 	 * without causing swapping.
+	 *
+	 * Free memory cannot be taken below the low watermark, before the
+	 * system starts swapping.
 	 */
-	available = i.freeram - totalreserve_pages;
+	available = i.freeram - wmark_low;
 
 	/*
 	 * Not all the page cache can be freed, otherwise the system will
@@ -146,6 +149,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
 		"CmaTotal:       %8lu kB\n"
 		"CmaFree:        %8lu kB\n"
 #endif
+
 		,
 		K(i.totalram),
 		K(i.freeram),
