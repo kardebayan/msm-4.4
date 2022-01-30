@@ -2637,12 +2637,20 @@ error:
 int dsi_display_enable(struct dsi_display *display)
 {
 	int rc = 0, i;
-
+	int blank;
+	struct msm_drm_notifier notifier_data;
 	if (!display) {
 		pr_err("Invalid params\n");
 		return -EINVAL;
 	}
-
+	blank = MSM_DRM_BLANK_UNBLANK;
+	notifier_data.data = &blank;
+	notifier_data.id = 0;
+	msm_drm_notifier_call_chain(MSM_DRM_EARLY_EVENT_BLANK,
+					&notifier_data);
+	
+	msm_drm_notifier_call_chain(MSM_DRM_EVENT_BLANK,
+					&notifier_data);
 	if (display->cont_splash_enabled) {
 		_dsi_display_config_ctrl_for_splash(display);
 		display->cont_splash_enabled = false;
