@@ -687,7 +687,6 @@ static void blk_queue_usage_counter_release(struct percpu_ref *ref)
 
 	wake_up_all(&q->mq_freeze_wq);
 }
-
 struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id)
 {
 	struct request_queue *q;
@@ -708,7 +707,6 @@ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id)
 	q->backing_dev_info = bdi_alloc_node(gfp_mask, node_id);
 	if (!q->backing_dev_info)
 		goto fail_split;
-
 	q->backing_dev_info->ra_pages =
 			(VM_MAX_READAHEAD * 1024) / PAGE_CACHE_SIZE;
 	q->backing_dev_info->capabilities = BDI_CAP_CGROUP_WRITEBACK;
@@ -2586,6 +2584,8 @@ static inline void blk_init_perf(void)
 }
 #endif /* #ifdef CONFIG_BLOCK_PERF_FRAMEWORK */
 
+
+
 /**
  * submit_bio - submit a bio to the block device layer for I/O
  * @rw: whether to %READ or %WRITE, or maybe to %READA (read ahead)
@@ -2631,7 +2631,6 @@ blk_qc_t submit_bio(int rw, struct bio *bio)
 				count);
 		}
 	}
-
 	set_submit_info(bio, count);
 	return generic_make_request(bio);
 }
@@ -2887,7 +2886,6 @@ struct request *blk_peek_request(struct request_queue *q)
 {
 	struct request *rq;
 	int ret;
-
 	while ((rq = __elv_next_request(q)) != NULL) {
 
 		rq = blk_pm_peek_request(q, rq);
