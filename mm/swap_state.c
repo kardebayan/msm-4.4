@@ -58,7 +58,10 @@ unsigned long total_swapcache_pages(void)
 		ret += swapper_spaces[i].nrpages;
 	return ret;
 }
-
+#ifdef VENDOR_EDIT
+//fangpan@Swdp.shanghai, 2015/11/26, add interface for resmon module
+EXPORT_SYMBOL(total_swapcache_pages);
+#endif
 static atomic_t swapin_readahead_hits = ATOMIC_INIT(4);
 
 void show_swap_cache_info(void)
@@ -355,7 +358,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
 		}
 
 		/* May fail (-ENOMEM) if radix-tree node allocation failed. */
-		__set_page_locked(new_page);
+		__SetPageLocked(new_page);
 		SetPageSwapBacked(new_page);
 		err = __add_to_swap_cache(new_page, entry);
 		if (likely(!err)) {
@@ -369,7 +372,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
 		}
 		radix_tree_preload_end();
 		ClearPageSwapBacked(new_page);
-		__clear_page_locked(new_page);
+		__ClearPageLocked(new_page);
 		/*
 		 * add_to_swap_cache() doesn't return -EEXIST, so we can safely
 		 * clear SWAP_HAS_CACHE flag.

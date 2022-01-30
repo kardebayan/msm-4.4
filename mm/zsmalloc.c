@@ -66,6 +66,7 @@
  * pages. ZS_MAX_ZSPAGE_ORDER defines upper limit on N.
  */
 #define ZS_MAX_ZSPAGE_ORDER 2
+
 #define ZS_MAX_PAGES_PER_ZSPAGE (_AC(1, UL) << ZS_MAX_ZSPAGE_ORDER)
 
 #define ZS_HANDLE_SIZE (sizeof(unsigned long))
