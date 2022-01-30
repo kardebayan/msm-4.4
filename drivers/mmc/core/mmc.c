@@ -3038,6 +3038,8 @@ static const struct mmc_bus_ops mmc_ops = {
 /*
  * Starting point for MMC card init.
  */
+
+
 int mmc_attach_mmc(struct mmc_host *host)
 {
 	int err;
@@ -3097,6 +3099,7 @@ int mmc_attach_mmc(struct mmc_host *host)
 	}
 
 	register_reboot_notifier(&host->card->reboot_notify);
+
 
 	return 0;
 

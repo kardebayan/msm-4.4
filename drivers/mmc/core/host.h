@@ -26,5 +26,6 @@ int mmc_retune(struct mmc_host *host);
 void mmc_latency_hist_sysfs_init(struct mmc_host *host);
 void mmc_latency_hist_sysfs_exit(struct mmc_host *host);
 
+
 #endif
 

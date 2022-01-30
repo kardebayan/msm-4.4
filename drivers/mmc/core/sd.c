@@ -1132,9 +1132,16 @@ static void mmc_sd_remove(struct mmc_host *host)
 
 	mmc_exit_clk_scaling(host);
 	mmc_remove_card(host->card);
-
+#ifdef VENDOR_EDIT
+/*yixue.ge@psw.bsp.kernel 2017-07-31
+   modify for bug 1061371 bad tcard can make system creash
+*/
+	host->card = NULL;
+    mmc_claim_host(host);
+#else /*VENDOR_EDIT*/
 	mmc_claim_host(host);
 	host->card = NULL;
+#endif /*VENDOR_EDIT*/
 	mmc_release_host(host);
 }
 
@@ -1202,6 +1209,11 @@ static void mmc_sd_detect(struct mmc_host *host)
 		       __func__, mmc_hostname(host), err);
 		err = _mmc_detect_card_removed(host);
 	}
+#if defined(MOUNT_EXSTORAGE_IF)
+	/*ye.zhang@BSP, 2016-05-01, add for CTSI support external storage or not*/
+	if (retries)
+		err = _mmc_detect_card_removed(host);
+#endif//MOUNT_EXSTORAGE_IF
 #else
 	err = _mmc_detect_card_removed(host);
 #endif
@@ -1462,7 +1474,7 @@ int mmc_attach_sd(struct mmc_host *host)
 	 * Detect and init the card.
 	 */
 #ifdef CONFIG_MMC_PARANOID_SD_INIT
-	retries = 5;
+    retries = 5;
 	while (retries) {
 		err = mmc_sd_init_card(host, rocr, NULL);
 		if (err) {
@@ -1499,7 +1511,6 @@ int mmc_attach_sd(struct mmc_host *host)
 		mmc_release_host(host);
 		goto remove_card;
 	}
-
 	return 0;
 
 remove_card:
@@ -1508,7 +1519,6 @@ remove_card:
 	mmc_claim_host(host);
 err:
 	mmc_detach_bus(host);
-
 	pr_err("%s: error %d whilst initialising SD card\n",
 		mmc_hostname(host), err);
 
