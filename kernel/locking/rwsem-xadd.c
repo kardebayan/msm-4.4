@@ -217,6 +217,8 @@ struct rw_semaphore __sched *rwsem_down_read_failed(struct rw_semaphore *sem)
 	struct rwsem_waiter waiter;
 	struct task_struct *tsk = current;
 
+
+
 	/* set up my own style of waitqueue */
 	waiter.task = tsk;
 	waiter.type = RWSEM_WAITING_FOR_READ;
@@ -247,7 +249,11 @@ struct rw_semaphore __sched *rwsem_down_read_failed(struct rw_semaphore *sem)
 		set_task_state(tsk, TASK_UNINTERRUPTIBLE);
 		if (!waiter.task)
 			break;
+
 		schedule();
+
+
+
 	}
 
 	__set_task_state(tsk, TASK_RUNNING);
@@ -440,6 +446,8 @@ struct rw_semaphore __sched *rwsem_down_write_failed(struct rw_semaphore *sem)
 	bool waiting = true; /* any queued threads before us */
 	struct rwsem_waiter waiter;
 
+
+
 	/* undo write bias from down_write operation, stop active locking */
 	count = rwsem_atomic_update(-RWSEM_ACTIVE_WRITE_BIAS, sem);
 
@@ -486,7 +494,11 @@ struct rw_semaphore __sched *rwsem_down_write_failed(struct rw_semaphore *sem)
 
 		/* Block until there are no active lockers. */
 		do {
+
+
 			schedule();
+
+
 			set_current_state(TASK_UNINTERRUPTIBLE);
 		} while ((count = sem->count) & RWSEM_ACTIVE_MASK);
 
