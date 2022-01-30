@@ -309,6 +309,7 @@ void trace_array_put(struct trace_array *this_tr)
 	mutex_unlock(&trace_types_lock);
 }
 
+
 int filter_check_discard(struct trace_event_file *file, void *rec,
 			 struct ring_buffer *buffer,
 			 struct ring_buffer_event *event)
@@ -504,7 +505,7 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
 
 #endif
 
-static void tracer_tracing_on(struct trace_array *tr)
+void tracer_tracing_on(struct trace_array *tr)
 {
 	if (tr->trace_buffer.buffer)
 		ring_buffer_record_on(tr->trace_buffer.buffer);
@@ -520,6 +521,7 @@ static void tracer_tracing_on(struct trace_array *tr)
 	/* Make the flag seen by readers */
 	smp_wmb();
 }
+
 
 /**
  * tracing_on - enable tracing buffers
@@ -774,7 +776,7 @@ void tracing_snapshot_alloc(void)
 EXPORT_SYMBOL_GPL(tracing_snapshot_alloc);
 #endif /* CONFIG_TRACER_SNAPSHOT */
 
-static void tracer_tracing_off(struct trace_array *tr)
+void tracer_tracing_off(struct trace_array *tr)
 {
 	if (tr->trace_buffer.buffer)
 		ring_buffer_record_off(tr->trace_buffer.buffer);
@@ -790,6 +792,7 @@ static void tracer_tracing_off(struct trace_array *tr)
 	/* Make the flag seen by readers */
 	smp_wmb();
 }
+
 
 /**
  * tracing_off - turn off tracing buffers
@@ -3664,7 +3667,7 @@ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
 	return 0;
 }
 
-static int trace_set_options(struct trace_array *tr, char *option)
+int trace_set_options(struct trace_array *tr, char *option)
 {
 	char *cmp;
 	int neg = 0;
@@ -4447,7 +4450,7 @@ static int __tracing_resize_ring_buffer(struct trace_array *tr,
 	return ret;
 }
 
-static ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
+ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
 					  unsigned long size, int cpu_id)
 {
 	int ret = size;
@@ -4471,6 +4474,7 @@ out:
 
 	return ret;
 }
+
 
 
 /**
@@ -5379,6 +5383,8 @@ static int tracing_clock_show(struct seq_file *m, void *v)
 
 	return 0;
 }
+
+
 
 static int tracing_set_clock(struct trace_array *tr, const char *clockstr)
 {
