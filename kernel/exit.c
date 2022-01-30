@@ -264,6 +264,7 @@ static bool has_stopped_jobs(struct pid *pgrp)
 	return false;
 }
 
+
 /*
  * Check to see if any process groups have become orphaned as
  * a result of our exiting, and if they have any stopped jobs,
@@ -663,6 +664,7 @@ static void check_stack_usage(void)
 static inline void check_stack_usage(void) {}
 #endif
 
+
 void do_exit(long code)
 {
 	struct task_struct *tsk = current;
@@ -691,6 +693,7 @@ void do_exit(long code)
 	ptrace_event(PTRACE_EVENT_EXIT, code);
 
 	validate_creds_for_do_exit(tsk);
+
 
 	/*
 	 * We're taking recursive faults here in do_exit. Safest is to just

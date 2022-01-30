@@ -18,6 +18,7 @@
 #include <linux/utsname.h>
 #include <trace/events/sched.h>
 
+
 /*
  * The number of tasks checked:
  */
@@ -72,17 +73,20 @@ static struct notifier_block panic_block = {
 	.notifier_call = hung_task_panic,
 };
 
+
+
+
 static void check_hung_task(struct task_struct *t, unsigned long timeout)
 {
 	unsigned long switch_count = t->nvcsw + t->nivcsw;
+
 
 	/*
 	 * Ensure the task is not frozen.
 	 * Also, skip vfork and any other user process that freezer should skip.
 	 */
 	if (unlikely(t->flags & (PF_FROZEN | PF_FREEZER_SKIP)))
-	    return;
-
+		return;
 	/*
 	 * When a freshly created task is scheduled once, changes its state to
 	 * TASK_UNINTERRUPTIBLE without having ever been switched out once, it
@@ -98,6 +102,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
 
 	trace_sched_process_hang(t);
 
+
 	if (!sysctl_hung_task_warnings)
 		return;
 
@@ -110,6 +115,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
 	 */
 	pr_err("INFO: task %s:%d blocked for more than %ld seconds.\n",
 		t->comm, t->pid, timeout);
+
 	pr_err("      %s %s %.*s\n",
 		print_tainted(), init_utsname()->release,
 		(int)strcspn(init_utsname()->version, " "),
@@ -155,6 +161,8 @@ static bool rcu_lock_break(struct task_struct *g, struct task_struct *t)
  * a really long time (120 seconds). If that happens, print out
  * a warning.
  */
+
+
 static void check_hung_uninterruptible_tasks(unsigned long timeout)
 {
 	int max_count = sysctl_hung_task_check_count;

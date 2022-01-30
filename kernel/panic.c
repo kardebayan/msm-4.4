@@ -65,6 +65,7 @@ void __weak panic_smp_self_stop(void)
 		cpu_relax();
 }
 
+
 /**
  *	panic - halt the system
  *	@fmt: The text string to print
@@ -80,6 +81,7 @@ void panic(const char *fmt, ...)
 	va_list args;
 	long i, i_next = 0;
 	int state = 0;
+
 
 	trace_kernel_panic(0);
 

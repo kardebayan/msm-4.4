@@ -482,6 +482,7 @@ int commit_creds(struct cred *new)
 	    !gid_eq(new->fsgid, old->fsgid))
 		proc_id_connector(task, PROC_EVENT_GID);
 
+
 	/* release the old obj and subj refs both */
 	put_cred(old);
 	put_cred(old);
