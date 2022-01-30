@@ -39,6 +39,10 @@
 #include <linux/of.h>
 #include <linux/of_device.h>
 #include <linux/wait.h>
+#ifdef VENDOR_EDIT
+//Fuchun.Liao@BSP.CHG.Basic 2017/03/11 add for console
+#include <soc/oppo/boot_mode.h>
+#endif /* VENDOR_EDIT */
 
 #define UART_MR1			0x0000
 
@@ -156,10 +160,17 @@
 #define UARTDM_NCF_TX			0x40
 #define UARTDM_RX_TOTAL_SNAP		0x38
 
+#ifdef VENDOR_EDIT
+/* Tong.han@BSP.Group.Tp, 2017/05/02, antong Add for debug console reg issue 969323*/
+#define UARTDM_TXFS			0x4c
+#define UARTDM_RXFS			0x50
+#endif/*VENDOR_EDIT*/
+
 #define UARTDM_BURST_SIZE		16   /* in bytes */
 #define UARTDM_TX_AIGN(x)		((x) & ~0x3) /* valid for > 1p3 */
 #define UARTDM_TX_MAX			256   /* in bytes, valid for <= 1p3 */
 #define UARTDM_RX_SIZE			(UART_XMIT_SIZE / 4)
+
 
 enum {
 	UARTDM_1P1 = 1,
@@ -190,9 +201,14 @@ struct msm_port {
 	bool			break_detected;
 	struct msm_dma		tx_dma;
 	struct msm_dma		rx_dma;
+#ifdef VENDOR_EDIT
+/* Tong.han@BSP.Group.Tp, 2017/05/02, antong Add for debug console reg issue 969323*/
+	int			tx_timeout;
+#endif/*VENDOR_EDIT*/
 };
 
 #define UART_TO_MSM(uart_port)	container_of(uart_port, struct msm_port, uart)
+
 
 static
 void msm_write(struct uart_port *port, unsigned int val, unsigned int off)
@@ -392,6 +408,7 @@ rel_rx:
 no_rx:
 	memset(dma, 0, sizeof(*dma));
 }
+
 
 static inline void msm_wait_for_xmitr(struct uart_port *port)
 {
@@ -1112,7 +1129,6 @@ static int msm_set_baud_rate(struct uart_port *port, unsigned int baud,
 	entry = msm_find_best_baud(port, baud, &rate);
 	clk_set_rate(msm_port->clk, rate);
 	baud = rate / 16 / entry->divisor;
-
 	spin_lock_irqsave(&port->lock, flags);
 	*saved_flags = flags;
 	port->uartclk = rate;
@@ -1482,7 +1498,7 @@ static int msm_poll_get_char(struct uart_port *port)
 	u32 imr;
 	int c;
 	struct msm_port *msm_port = UART_TO_MSM(port);
-
+	
 	/* Disable all interrupts */
 	imr = msm_read(port, UART_IMR);
 	msm_write(port, 0, UART_IMR);
@@ -1502,6 +1518,7 @@ static void msm_poll_put_char(struct uart_port *port, unsigned char c)
 {
 	u32 imr;
 	struct msm_port *msm_port = UART_TO_MSM(port);
+	
 
 	/* Disable all interrupts */
 	imr = msm_read(port, UART_IMR);
@@ -1669,7 +1686,6 @@ static int __init msm_console_setup(struct console *co, char *options)
 	int bits = 8;
 	int parity = 'n';
 	int flow = 'n';
-
 	if (unlikely(co->index >= UART_NR || co->index < 0))
 		return -ENXIO;
 
@@ -1677,7 +1693,6 @@ static int __init msm_console_setup(struct console *co, char *options)
 
 	if (unlikely(!port->membase))
 		return -ENXIO;
-
 	msm_serial_set_mnd_regs(port);
 
 	if (options)
@@ -1755,6 +1770,7 @@ static struct uart_driver msm_uart_driver = {
 	.cons = MSM_CONSOLE,
 };
 
+
 static atomic_t msm_uart_next_id = ATOMIC_INIT(0);
 
 static const struct of_device_id msm_uartdm_table[] = {
@@ -1783,6 +1799,7 @@ static int msm_serial_probe(struct platform_device *pdev)
 
 	if (unlikely(line < 0 || line >= UART_NR))
 		return -ENXIO;
+
 
 	dev_info(&pdev->dev, "msm_serial: detected port #%d\n", line);
 
@@ -1844,18 +1861,16 @@ MODULE_DEVICE_TABLE(of, msm_match_table);
 static int msm_serial_suspend(struct device *dev)
 {
 	struct uart_port *port = dev_get_drvdata(dev);
-
+	
 	uart_suspend_port(&msm_uart_driver, port);
-
 	return 0;
 }
 
 static int msm_serial_resume(struct device *dev)
 {
 	struct uart_port *port = dev_get_drvdata(dev);
-
+	
 	uart_resume_port(&msm_uart_driver, port);
-
 	return 0;
 }
 #endif
@@ -1877,7 +1892,7 @@ static struct platform_driver msm_platform_driver = {
 static int __init msm_serial_init(void)
 {
 	int ret;
-
+	
 	ret = uart_register_driver(&msm_uart_driver);
 	if (unlikely(ret))
 		return ret;
@@ -1885,7 +1900,6 @@ static int __init msm_serial_init(void)
 	ret = platform_driver_register(&msm_platform_driver);
 	if (unlikely(ret))
 		uart_unregister_driver(&msm_uart_driver);
-
 	pr_info("msm_serial: driver initialized\n");
 
 	return ret;
