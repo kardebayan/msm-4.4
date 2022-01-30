@@ -23,6 +23,7 @@ static struct workqueue_struct *autosleep_wq;
 static DEFINE_MUTEX(autosleep_lock);
 static struct wakeup_source *autosleep_ws;
 
+
 static void try_to_suspend(struct work_struct *work)
 {
 	unsigned int initial_count, final_count;
@@ -94,6 +95,7 @@ int pm_autosleep_set_state(suspend_state_t state)
 		return -EINVAL;
 #endif
 
+
 	__pm_stay_awake(autosleep_ws);
 
 	mutex_lock(&autosleep_lock);
@@ -110,11 +112,14 @@ int pm_autosleep_set_state(suspend_state_t state)
 	}
 
 	mutex_unlock(&autosleep_lock);
+
+
 	return 0;
 }
 
 int __init pm_autosleep_init(void)
 {
+
 	autosleep_ws = wakeup_source_register("autosleep");
 	if (!autosleep_ws)
 		return -ENOMEM;

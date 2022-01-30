@@ -41,6 +41,8 @@ static ktime_t curr_monotime; /* monotonic time after last suspend */
 static ktime_t last_stime; /* monotonic boottime offset before last suspend */
 static ktime_t curr_stime; /* monotonic boottime offset after last suspend */
 
+
+
 static ssize_t last_resume_reason_show(struct kobject *kobj, struct kobj_attribute *attr,
 		char *buf)
 {
@@ -63,6 +65,101 @@ static ssize_t last_resume_reason_show(struct kobject *kobj, struct kobj_attribu
 	spin_unlock(&resume_reason_lock);
 	return buf_offset;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 static ssize_t last_suspend_time_show(struct kobject *kobj,
 			struct kobj_attribute *attr, char *buf)
@@ -92,12 +189,40 @@ static ssize_t last_suspend_time_show(struct kobject *kobj,
 				sleep_time.tv_sec, sleep_time.tv_nsec);
 }
 
+
 static struct kobj_attribute resume_reason = __ATTR_RO(last_resume_reason);
 static struct kobj_attribute suspend_time = __ATTR_RO(last_suspend_time);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 static struct attribute *attrs[] = {
 	&resume_reason.attr,
 	&suspend_time.attr,
+
+
+
 	NULL,
 };
 static struct attribute_group attr_group = {
@@ -195,6 +320,54 @@ static struct notifier_block wakeup_reason_pm_notifier_block = {
 	.notifier_call = wakeup_reason_pm_event,
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Initializes the sysfs parameter
  * registers the pm_event notifier
  */
@@ -219,6 +392,7 @@ int __init wakeup_reason_init(void)
 		printk(KERN_WARNING "[%s] failed to create a sysfs group %d\n",
 				__func__, retval);
 	}
+
 	return 0;
 }
 

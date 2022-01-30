@@ -34,6 +34,7 @@
 
 #include "power.h"
 
+
 const char *pm_labels[] = { "mem", "standby", "freeze", NULL };
 const char *pm_states[PM_SUSPEND_MAX];
 
@@ -249,6 +250,7 @@ MODULE_PARM_DESC(pm_test_delay,
 static int suspend_test(int level)
 {
 #ifdef CONFIG_PM_DEBUG
+
 	if (pm_test_level == level) {
 		printk(KERN_INFO "suspend debug: Waiting for %d second(s).\n",
 				pm_test_delay);
@@ -320,8 +322,9 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 	int error, last_dev;
 
 	error = platform_suspend_prepare(state);
-	if (error)
+	if (error){
 		goto Platform_finish;
+	}
 
 	error = dpm_suspend_late(PMSG_SUSPEND);
 	if (error) {
@@ -333,8 +336,9 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 		goto Platform_finish;
 	}
 	error = platform_suspend_prepare_late(state);
-	if (error)
+	if (error){
 		goto Devices_early_resume;
+	}
 
 	error = dpm_suspend_noirq(PMSG_SUSPEND);
 	if (error) {
@@ -346,11 +350,12 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 		goto Platform_early_resume;
 	}
 	error = platform_suspend_prepare_noirq(state);
-	if (error)
+	if (error){
 		goto Platform_wake;
-
-	if (suspend_test(TEST_PLATFORM))
+	}
+	if (suspend_test(TEST_PLATFORM)){
 		goto Platform_wake;
+	}
 
 	/*
 	 * PM_SUSPEND_FREEZE equals
@@ -373,6 +378,7 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 
 	arch_suspend_disable_irqs();
 	BUG_ON(!irqs_disabled());
+
 
 	error = syscore_suspend();
 	if (!error) {
@@ -423,13 +429,14 @@ int suspend_devices_and_enter(suspend_state_t state)
 	int error;
 	bool wakeup = false;
 
-	if (!sleep_state_supported(state))
+	if (!sleep_state_supported(state)){
 		return -ENOSYS;
+	}
 
 	error = platform_suspend_begin(state);
-	if (error)
+	if (error){
 		goto Close;
-
+	}
 	suspend_console();
 	suspend_test_start();
 	error = dpm_suspend_start(PMSG_SUSPEND);
@@ -439,9 +446,9 @@ int suspend_devices_and_enter(suspend_state_t state)
 		goto Recover_platform;
 	}
 	suspend_test_finish("suspend devices");
-	if (suspend_test(TEST_DEVICES))
+	if (suspend_test(TEST_DEVICES)){
 		goto Recover_platform;
-
+	}
 	do {
 		error = suspend_enter(state, &wakeup);
 	} while (!error && !wakeup && platform_suspend_again(state));
@@ -476,6 +483,7 @@ static void suspend_finish(void)
 	pm_restore_console();
 }
 
+
 /**
  * enter_state - Do common work needed to enter system sleep state.
  * @state: System sleep state to enter.
@@ -500,8 +508,9 @@ static int enter_state(suspend_state_t state)
 	} else if (!valid_state(state)) {
 		return -EINVAL;
 	}
-	if (!mutex_trylock(&pm_mutex))
+	if (!mutex_trylock(&pm_mutex)){
 		return -EBUSY;
+	}
 
 	if (state == PM_SUSPEND_FREEZE)
 		freeze_begin();
@@ -517,8 +526,9 @@ static int enter_state(suspend_state_t state)
 	pr_debug("PM: Preparing system for sleep (%s)\n", pm_states[state]);
 	pm_suspend_clear_flags();
 	error = suspend_prepare(state);
-	if (error)
+	if (error){
 		goto Unlock;
+	}
 
 	if (suspend_test(TEST_FREEZER))
 		goto Finish;
@@ -565,6 +575,8 @@ int pm_suspend(suspend_state_t state)
 
 	pm_suspend_marker("entry");
 	error = enter_state(state);
+
+
 	if (error) {
 		suspend_stats.fail++;
 		dpm_save_failed_errno(error);
