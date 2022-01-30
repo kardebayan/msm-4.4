@@ -406,6 +406,7 @@ struct mtp_instance {
 /* temporary variable used between mtp_open() and mtp_gadget_bind() */
 static struct mtp_dev *_mtp_dev;
 
+
 static inline struct mtp_dev *func_to_mtp(struct usb_function *f)
 {
 	return container_of(f, struct mtp_dev, function);
@@ -1084,6 +1085,7 @@ static int mtp_send_event(struct mtp_dev *dev, struct mtp_event *event)
 	return ret;
 }
 
+
 static long mtp_send_receive_ioctl(struct file *fp, unsigned code,
 	struct mtp_file_range *mfr)
 {
@@ -1126,6 +1128,7 @@ static long mtp_send_receive_ioctl(struct file *fp, unsigned code,
 	dev->xfer_file_length = mfr->length;
 	/* make sure write is done before parameters are read */
 	smp_wmb();
+
 
 	if (code == MTP_SEND_FILE_WITH_HEADER) {
 		work = &dev->send_file_work;
