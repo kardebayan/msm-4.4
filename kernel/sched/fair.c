@@ -900,6 +900,8 @@ update_stats_wait_start(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	se->statistics.wait_start = wait_start;
 }
 
+
+
 static void
 update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
 {
@@ -924,6 +926,7 @@ update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	se->statistics.wait_count++;
 	se->statistics.wait_sum += delta;
 	se->statistics.wait_start = 0;
+
 }
 #else
 static inline void
@@ -4537,7 +4540,6 @@ static void enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 				se->statistics.iowait_count++;
 				trace_sched_stat_iowait(tsk, delta);
 			}
-
 			trace_sched_stat_blocked(tsk, delta);
 			trace_sched_blocked_reason(tsk);
 

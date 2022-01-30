@@ -5967,6 +5967,7 @@ out:
 	return ret_code;
 }
 
+
 /*
  * Note: The client calling sched_isolate_cpu() is repsonsible for ONLY
  * calling sched_unisolate_cpu() on a CPU that the client previously isolated.
@@ -6015,6 +6016,7 @@ out:
 			    start_time, 0);
 	return ret_code;
 }
+
 
 int sched_unisolate_cpu(int cpu)
 {
@@ -9701,3 +9703,4 @@ void dump_cpu_task(int cpu)
 	pr_info("Task dump for CPU %d:\n", cpu);
 	sched_show_task(cpu_curr(cpu));
 }
+
