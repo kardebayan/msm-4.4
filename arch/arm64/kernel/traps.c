@@ -282,6 +282,7 @@ static arch_spinlock_t die_lock = __ARCH_SPIN_LOCK_UNLOCKED;
 static int die_owner = -1;
 static unsigned int die_nest_count;
 
+
 static unsigned long oops_begin(void)
 {
 	int cpu;
