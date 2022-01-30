@@ -259,6 +259,9 @@ static int msm_rpm_master_copy_stats(
 	return RPM_MASTERS_BUF_LEN - count;
 }
 
+
+
+
 static ssize_t msm_rpm_master_stats_file_read(struct file *file,
 				char __user *bufu, size_t count, loff_t *ppos)
 {
@@ -295,6 +298,7 @@ exit:
 	mutex_unlock(&msm_rpm_master_stats_mutex);
 	return ret;
 }
+
 
 static int msm_rpm_master_stats_file_open(struct inode *inode,
 		struct file *file)
@@ -345,6 +349,7 @@ static const struct file_operations msm_rpm_master_stats_fops = {
 	.release  = msm_rpm_master_stats_file_close,
 	.llseek   = no_llseek,
 };
+
 
 static struct msm_rpm_master_stats_platform_data
 			*msm_rpm_master_populate_pdata(struct device *dev)
@@ -443,7 +448,6 @@ static  int msm_rpm_master_stats_probe(struct platform_device *pdev)
 								__func__);
 		return -ENOMEM;
 	}
-
 	platform_set_drvdata(pdev, dent);
 	return 0;
 }

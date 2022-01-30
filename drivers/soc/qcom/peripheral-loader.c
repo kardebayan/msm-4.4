@@ -275,6 +275,10 @@ int pil_do_ramdump(struct pil_desc *desc,
 	struct ramdump_segment *ramdump_segs, *s;
 	void __iomem *offset;
 
+
+
+
+
 	memcpy(&offset, &priv->minidump_ss, sizeof(priv->minidump_ss));
 	/*
 	 * Collect minidump if smem base is initialized,

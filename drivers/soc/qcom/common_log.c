@@ -23,6 +23,7 @@
 #include <soc/qcom/minidump.h>
 #include <asm/sections.h>
 
+
 #define MISC_DUMP_DATA_LEN		4096
 #define PMIC_DUMP_DATA_LEN		(64 * 1024)
 #define VSENSE_DUMP_DATA_LEN		4096
@@ -257,6 +258,7 @@ static void __init register_kernel_sections(void)
 	}
 }
 
+
 #ifdef CONFIG_QCOM_MINIDUMP
 void dump_stack_minidump(u64 sp)
 {
@@ -291,6 +293,8 @@ static void __init async_common_log_init(void *data, async_cookie_t cookie)
 	register_pmic_dump();
 	register_vsense_dump();
 	register_rpm_dump();
+
+	
 }
 
 static int __init msm_common_log_init(void)

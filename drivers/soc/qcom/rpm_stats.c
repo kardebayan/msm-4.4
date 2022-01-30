@@ -118,6 +118,7 @@ static inline int msm_rpmstats_append_data_to_buf(char *buf,
 		data->client_votes);
 }
 
+
 static inline u32 msm_rpmstats_read_long_register_v2(void __iomem *regbase,
 		int index, int offset)
 {
@@ -171,6 +172,7 @@ static inline int msm_rpmstats_copy_stats_v2(
 	}
 	return length;
 }
+
 
 static inline unsigned long  msm_rpmstats_read_register(void __iomem *regbase,
 		int index, int offset)
@@ -246,6 +248,7 @@ static int msm_rpmstats_copy_stats(struct msm_rpmstats_private_data *pdata)
 			usec);
 }
 
+
 static ssize_t msm_rpmstats_file_read(struct file *file, char __user *bufu,
 				  size_t count, loff_t *ppos)
 {
@@ -284,6 +287,7 @@ exit:
 	mutex_unlock(&rpm_stats_mutex);
 	return ret;
 }
+
 
 static int msm_rpmstats_file_open(struct inode *inode, struct file *file)
 {
@@ -345,6 +349,8 @@ static const struct file_operations msm_rpmstats_fops = {
 	.release  = msm_rpmstats_file_close,
 	.llseek   = no_llseek,
 };
+
+
 
 static int msm_rpmheap_file_show(struct seq_file *m, void *v)
 {
@@ -447,7 +453,7 @@ static int msm_rpmstats_create_sysfs(struct msm_rpmstats_platform_data *pd)
 
 	rpmstats_kobj = kobject_create_and_add("system_sleep", power_kobj);
 	if (!rpmstats_kobj) {
-		pr_err("%s: Cannot create rpmstats kobject\n", __func__);
+		pr_err("Cannot create rpmstats kobject\n");
 		ret = -ENOMEM;
 		goto fail;
 	}
@@ -535,7 +541,6 @@ static int msm_rpmstats_probe(struct platform_device *pdev)
 			kfree(pdata);
 			return -ENOMEM;
 		}
-
 	} else {
 		kfree(pdata);
 		return -EINVAL;
